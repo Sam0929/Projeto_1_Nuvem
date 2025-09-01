@@ -1,25 +1,226 @@
 {% extends "users/base.html" %}
-{% block title %} Home Page {% endblock title%}
+{% load static %}
+
+{% block title %}Dashboard - CoinClip{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/home_user.css' %}">
+{% endblock %}
+
 {% block content %}
-    <div class="jumbotron">
-        <h1 class="display-4">Welcome, {{user.first_name.title|default:'Guest'}}</h1>
-        <p class="lead">
-            This is <b>user registration and login system</b> build with django which is
-            a Python-based free and open-source web framework that follows the model–template–views architectural pattern.
-        </p>
-        <hr class="my-4">
-        <p class="lead">
-            {% if user.is_authenticated %}
-                <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="nav-item nav-link btn btn-link" style="padding:0; border:none; background:none; cursor:pointer;">
-                        Logout
-                    </button>
-                </form>
-            {% else %}
-                <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Sign in</a>
-            {% endif %}
-        </p>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <img src="{% static 'img/logo.png' %}">
+                    <h2><span>coinclip</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-symbols-outlined">close</span>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <a href="{% url 'users:home' %}" class="active">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="#">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    <h3>Entradas</h3>
+                </a>
+                <a href="#">
+                    <span class="material-symbols-outlined">do_not_disturb_on</span>
+                    <h3>Saídas</h3>
+                </a>
+                <a href="{% url 'users:profile' %}">
+                    <span class="material-symbols-outlined">manage_accounts</span>
+                    <h3>Configurações</h3>
+                </a>
+                <a href="#">
+                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                    <h3>Adicionar Lançamento</h3>
+                </a>
+                <a href="{% url 'users:logout' %}">
+                    <span class="material-symbols-outlined">logout</span>
+                    <h3>Sair</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Dashboard</h1>
+
+            <div class="date">
+                <input type="date">
+            </div>
+
+            <div class="insights">
+                <div class="balance">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Balanço</h3>
+                            <h1>R$ {{ balance|floatformat:2 }}</h1>
+                        </div>
+                        <div class="progress">
+                            <svg><circle cx="38" cy="38" r="36"></circle></svg>
+                            <div class="number"><p>100%</p></div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Últimas 24 horas</small>
+                </div>
+
+                <div class="incomes">
+                    <span class="material-symbols-outlined">trending_up</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Entradas</h3>
+                            <h1>R$ {{ positiveTotal|floatformat:2 }}</h1>
+                        </div>
+                        <div class="progress">
+                            <svg><circle cx="38" cy="38" r="36"></circle></svg>
+                            <div class="number">
+                                <p>{{ incomePercentage }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Últimas 24 horas</small>
+                </div>
+
+                <div class="expenses">
+                    <span class="material-symbols-outlined">trending_down</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Gastos</h3>
+                            <h1>R$ {{ negativeTotal|floatformat:2 }}</h1>
+                        </div>
+                        <div class="progress">
+                            <svg><circle cx="38" cy="38" r="36"></circle></svg>
+                            <div class="number">
+                                <p>{{ expensePercentage }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Últimas 24 horas</small>
+                </div>
+            </div>
+
+            <div class="orders">
+                <h2>Lançamentos Recentes</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in data_transactions %}
+                            <tr>
+                                <td>{{ transaction.name }}</td>
+                                <td>{{ transaction.description }}</td>
+                                <td class="{% if transaction.is_income %}success{% else %}danger{% endif %}">
+                                    R$ {{ transaction.value|floatformat:2 }}
+                                </td>
+                                <td class="primary">Detalhes</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 1rem;">Nenhum lançamento encontrado</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="#">Mostrar mais</a>
+            </div>
+        </main>
+        <div class="right">
+            <div class="top">
+                <button id="menu-button">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-symbols-outlined active">light_mode</span>
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Olá, <b>{{ user.first_name|default:user.username }}</b></p>
+                        {% if user.is_superuser %}
+                            <small class="text-muted">Administrador</small>
+                        {% else %}
+                            <small class="text-muted">Cliente</small>
+                        {% endif %}
+                    </div>
+                    <div class="profile-photo">
+                        <img src="{{ user.profile.avatar.url }}" alt="Foto do perfil">
+                    </div>
+                </div>
+            </div>
+
+            <div class="investor">
+                <h2>Mercado de Ações</h2>
+                {% for stock in stocks %}
+                    <div class="item">
+                        <div class="icon">
+                            {% if stock.changesPercentage > 0 %}
+                                <span class="material-symbols-outlined success">arrow_upward</span>
+                            {% else %}
+                                <span class="material-symbols-outlined danger">arrow_downward</span>
+                            {% endif %}
+                        </div>
+                        <div class="right">
+                            <div class="info">
+                                <h3>{{ stock.symbol }}</h3>
+                                <small class="text-muted">Últimas 24 horas</small>
+                            </div>
+                            {% if stock.changesPercentage > 0 %}
+                                <h5 class="success">{{ stock.changesPercentage|floatformat:2 }}%</h5>
+                            {% else %}
+                                <h5 class="danger">{{ stock.changesPercentage|floatformat:2 }}%</h5>
+                            {% endif %}
+                            <h3>{{ stock.price|floatformat:2 }}</h3>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted" style="padding: 1rem 0;">Nenhuma ação encontrada.</p>
+                {% endfor %}
+                
+                <div class="item add-stock">
+                    <span class="material-symbols-outlined">add</span>
+                    <a href="#">Adicionar Ação</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-{% endblock content %}
+    {{ stocks|json_script:"stocks-data" }}
+    <script>
+        
+        let stocksData = [];
+        const stocksDataElement = document.getElementById('stocks-data');
+
+        if (stocksDataElement) {
+            try {
+                stocksData = JSON.parse(stocksDataElement.textContent);
+            } catch (e) {
+                console.error("Erro ao processar os dados JSON das ações:", e);
+            }
+        }
+        console.log("Dados das Ações:", stocksData);
+
+        const themeToggler = document.querySelector(".theme-toggler");
+
+        if (themeToggler) {
+            themeToggler.addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme-variables');
+                themeToggler.querySelector('span:nth-child(1)').classList.toggle('active');
+                themeToggler.querySelector('span:nth-child(2)').classList.toggle('active');
+            });
+        }
+    </script>
+</body>
+{% endblock %}

@@ -1,53 +1,72 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.contrib.auth.views import LoginView, PasswordResetView, PasswordChangeView
-from django.contrib.auth import login
+from django.contrib.auth.views import PasswordResetView, PasswordChangeView
+from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from .forms import LoginForm, RegisterForm # Importe seus formulários
-
 from .forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm
+from .models import Transaction  
+from django.db.models import Sum
 
-
+@login_required
 def home(request):
-    return render(request, 'users/home.html')
 
+    transactions = Transaction.objects.filter(user=request.user)
+   
+    positive_total_dict = transactions.filter(value__gt=0).aggregate(total=Sum('value'))
+    positiveTotal = positive_total_dict['total'] or 0.00
 
-class RegisterView(View):
-    form_class = RegisterForm
-    initial = {'key': 'value'}
-    template_name = 'users/register.html'
+    
+    negative_total_dict = transactions.filter(value__lt=0).aggregate(total=Sum('value'))
+    negativeTotal = negative_total_dict['total'] or 0.00
 
-    def dispatch(self, request, *args, **kwargs):
-        # will redirect to the home page if a user tries to access the register page while logged in
-        if request.user.is_authenticated:
-            return redirect(to='/')
+    balance = positiveTotal + negativeTotal
 
-        # else process dispatch as it otherwise normally would
-        return super(RegisterView, self).dispatch(request, *args, **kwargs)
+    total_flow = positiveTotal + abs(negativeTotal) 
+    
+    if total_flow > 0:
+        incomePercentage = int((positiveTotal / total_flow) * 100)
+        expensePercentage = int((abs(negativeTotal) / total_flow) * 100)
+    else:
+        incomePercentage = 0
+        expensePercentage = 0
 
-    def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'form': form})
+   
+    recent_transactions = transactions.order_by('-created_at')[:10]
+ 
+    stocks = [
+        {'symbol': 'PETR4', 'price': 38.50, 'changesPercentage': 1.5},       #SIMULAÇÃO, NECESSARIO API
+        {'symbol': 'MGLU3', 'price': 12.70, 'changesPercentage': -0.8},
+        {'symbol': 'VALE3', 'price': 65.20, 'changesPercentage': 2.1},
+    ]
 
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+    
+    context = {
+        'balance': balance,
+        'positiveTotal': positiveTotal,
+        'negativeTotal': abs(negativeTotal), 
+        'incomePercentage': incomePercentage,
+        'expensePercentage': expensePercentage,
+        'data_transactions': recent_transactions, 
+        'stocks': stocks,
+     
+    }
 
-        if form.is_valid():
-            form.save()
-
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}')
-
-            return redirect(to='login')
-
-        return render(request, self.template_name, {'form': form})
-
+    return render(request, 'users/home.html', context)
 
 class LoginAndRegisterView(View):
+
     template_name = 'users/login.html'
+
+    def dispatch(self, request, *args, **kwargs):
+    
+        if request.user.is_authenticated:
+         
+            return redirect('users:home')
+      
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         login_form = LoginForm()
@@ -75,7 +94,7 @@ class LoginAndRegisterView(View):
                     request.session.set_expiry(0)
                     request.session.modified = True
 
-                return redirect('users-home')
+                return redirect('users:home')
          
         elif 'submit_register' in request.POST:
             active_form = 'register'
@@ -83,7 +102,7 @@ class LoginAndRegisterView(View):
             if register_form.is_valid():
                 user = register_form.save()
                 login(request, user) 
-                return redirect('users-home')
+                return redirect('users:login')
             
         context = {
             'login_form': login_form,
@@ -101,13 +120,19 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                       "if an account exists with the email you entered. You should receive them shortly." \
                       " If you don't receive an email, " \
                       "please make sure you've entered the address you registered with, and check your spam folder."
-    success_url = reverse_lazy('users-home')
+    success_url = reverse_lazy('users:home')
 
 
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'users/change_password.html'
     success_message = "Successfully Changed Your Password"
-    success_url = reverse_lazy('users-home')
+    success_url = reverse_lazy('users:home')
+
+def logout_view(request):
+   
+    logout(request)
+    messages.info(request, "Você foi desconectado com sucesso.")
+    return redirect('users:login') 
 
 
 @login_required
@@ -120,7 +145,7 @@ def profile(request):
             user_form.save()
             profile_form.save()
             messages.success(request, 'Your profile is updated successfully')
-            return redirect(to='users-profile')
+            return redirect(to='users:profile')
     else:
         user_form = UpdateUserForm(instance=request.user)
         profile_form = UpdateProfileForm(instance=request.user.profile)

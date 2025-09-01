@@ -1,17 +1,18 @@
 from django.urls import path, re_path, include
 from django.contrib.auth import views as auth_views
-from .views import home, profile, RegisterView, LoginAndRegisterView, ResetPasswordView, ChangePasswordView
-from .forms import LoginForm
+from .views import home, profile, LoginAndRegisterView, ResetPasswordView, ChangePasswordView, logout_view
+
+app_name = 'users'
 
 urlpatterns = [
-    path('', home, name='users-home'),
-    path('register/', RegisterView.as_view(), name='users-register'),
-    path('profile/', profile, name='users-profile'),
+    
+    path('', LoginAndRegisterView.as_view(), name='login'),
 
-    # Autenticação
-    path('login/', LoginAndRegisterView.as_view(), name='login'),
+    path('home/', home, name ='home'),
+    
+    path('profile/', profile, name='profile'),
 
-    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
+   path('logout/', logout_view, name='logout'),
 
     path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
 

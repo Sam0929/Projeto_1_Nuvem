@@ -24,6 +24,15 @@
             <small>Ainda não registrado?</small>
             <a href="#" class="toggle">Cadastre-se</a>
           </div>
+          {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+          {% endif %}
           {% if login_form.non_field_errors %}
           <div class="form-errors">
             {% for error in login_form.non_field_errors %}<small class="danger">{{ error }}</small>{% endfor %}
