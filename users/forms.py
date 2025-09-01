@@ -35,7 +35,6 @@ class RegisterForm(UserCreationForm):
                                                                   'class': 'input-field',
                                                                   'data-toggle': 'password',
                                                                   'id': 'password1',
-                                                                  'name': 'password',
                                                                   }))
     password2 = forms.CharField(max_length=50,
                                 required=True,
@@ -43,12 +42,26 @@ class RegisterForm(UserCreationForm):
                                                                   'class': 'input-field',
                                                                   'data-toggle': 'password',
                                                                   'id': 'password2',
-                                                                  'name': 'password',
                                                                   }))
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'username', 'email']
+
+    def save(self, commit=True):
+    # 1. Salva o usuário (username/password) primeiro, mas sem commit
+        user = super().save(commit=False)
+        
+        # 2. Pega os dados extras do formulário limpo (cleaned_data)
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data['email']
+        
+        # 3. Se commit=True, salva o usuário no banco de dados
+        if commit:
+            user.save()
+            
+        return user
 
 
 class LoginForm(AuthenticationForm):

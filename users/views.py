@@ -50,7 +50,6 @@ class LoginAndRegisterView(View):
     template_name = 'users/login.html'
 
     def get(self, request, *args, **kwargs):
-        
         login_form = LoginForm()
         register_form = RegisterForm()
         context = {
@@ -60,9 +59,10 @@ class LoginAndRegisterView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-      
+
         login_form = LoginForm()
         register_form = RegisterForm()
+        active_form = 'login' 
 
         if 'submit_login' in request.POST:
             login_form = LoginForm(data=request.POST)
@@ -75,18 +75,20 @@ class LoginAndRegisterView(View):
                     request.session.set_expiry(0)
                     request.session.modified = True
 
-                return redirect('users-home') 
-
+                return redirect('users-home')
+         
         elif 'submit_register' in request.POST:
+            active_form = 'register'
             register_form = RegisterForm(request.POST)
             if register_form.is_valid():
                 user = register_form.save()
                 login(request, user) 
-                return redirect('users-home') 
-
+                return redirect('users-home')
+            
         context = {
             'login_form': login_form,
             'register_form': register_form,
+            'active_form': active_form, 
         }
         return render(request, self.template_name, context)
 
