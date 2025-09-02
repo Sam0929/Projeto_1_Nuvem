@@ -1,15 +1,137 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt_BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <title>Sign In</title>
-  {% block extra_head %}{% endblock %}
-  <title>{% block title %} {% endblock %} </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CoinClip{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/home_user.css' %}">
+    
+    {% block extra_head %}{% endblock %}  
 </head>
 <body>
-  {% block content %}{% endblock %}
+    <div class="container">
+        <aside>
+            <div class="top">
+                <a href="{% url 'users:home' %}" class="logo-link">
+                    <div class="logo">
+                        <img src="{% static 'img/logo.png' %}">
+                        <h2><span>Coinclip</span></h2>
+                    </div>
+                </a>
+                <div class="close" id="close-btn">
+                    <span class="material-symbols-outlined">close</span>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <a href="{% url 'users:home' %}" class="active">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="#">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    <h3>Entradas</h3>
+                </a>
+                <a href="#">
+                    <span class="material-symbols-outlined">do_not_disturb_on</span>
+                    <h3>Saídas</h3>
+                </a>
+                <a href="{% url 'users:profile' %}">
+                    <span class="material-symbols-outlined">manage_accounts</span>
+                    <h3>Configurações</h3>
+                </a>
+                <a href="#">
+                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                    <h3>Adicionar Lançamento</h3>
+                </a>
+                <a href="{% url 'users:logout' %}">
+                    <span class="material-symbols-outlined">logout</span>
+                    <h3>Sair</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            {% block content %}
+                {% comment %} O conteúdo de cada página específica será inserido aqui. {% endcomment %}
+            {% endblock %}
+        </main>
+        <div class="right">
+            <div class="top">
+                <button id="menu-button">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-symbols-outlined active">light_mode</span>
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p>Olá, <b>{{ user.first_name|default:user.username }}</b></p>
+                        {% if user.is_superuser %}
+                            <small class="text-muted">Administrador</small>
+                        {% else %}
+                            <small class="text-muted">Cliente</small>
+                        {% endif %}
+                    </div>
+                    <div class="profile-photo">
+                        <img src="{{ user.profile.avatar.url }}" alt="Foto do perfil">
+                    </div>
+                </div>
+            </div>
+
+            <div class="investor">
+                <h2>Mercado de Ações</h2>
+                {% for stock in stocks %}
+                    <div class="item">
+                        <div class="icon">
+                            {% if stock.changesPercentage > 0 %}
+                                <span class="material-symbols-outlined success">arrow_upward</span>
+                            {% else %}
+                                <span class="material-symbols-outlined danger">arrow_downward</span>
+                            {% endif %}
+                        </div>
+                        <div class="right">
+                            <div class="info">
+                                <h3>{{ stock.symbol }}</h3>
+                                <small class="text-muted">Últimas 24 horas</small>
+                            </div>
+                            {% if stock.changesPercentage > 0 %}
+                                <h5 class="success">{{ stock.changesPercentage|floatformat:2 }}%</h5>
+                            {% else %}
+                                <h5 class="danger">{{ stock.changesPercentage|floatformat:2 }}%</h5>
+                            {% endif %}
+                            <h3>{{ stock.price|floatformat:2 }}</h3>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted" style="padding: 1rem 0;">Nenhuma ação encontrada.</p>
+                {% endfor %}
+                
+                <div class="item add-stock">
+                    <span class="material-symbols-outlined">add</span>
+                    <a href="#">Adicionar Ação</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ stocks|json_script:"stocks-data" }}
+    <script>
+        
+        const stocksData = JSON.parse(document.getElementById('stocks-data').textContent);
+        console.log("Dados das Ações:", stocksData);
+        const themeToggler = document.querySelector(".theme-toggler");
+        themeToggler.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme-variables');
+            themeToggler.querySelector('span:nth-child(1)').classList.toggle('active');
+            themeToggler.querySelector('span:nth-child(2)').classList.toggle('active');
+        });
+    </script>
+     
+    {% block scripts %}
+    {% endblock %}
+
 </body>
 </html>

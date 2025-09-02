@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 
 from .models import Profile
 
@@ -82,6 +82,14 @@ class LoginForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ['username', 'password', 'remember_me']
+
+        
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['old_password'].widget.attrs.update({'class': 'form-input', 'placeholder': 'Digite sua senha atual'})
+        self.fields['new_password1'].widget.attrs.update({'class': 'form-input', 'placeholder': 'Digite sua nova senha'})
+        self.fields['new_password2'].widget.attrs.update({'class': 'form-input', 'placeholder': 'Confirme sua nova senha'})
 
 
 class UpdateUserForm(forms.ModelForm):
