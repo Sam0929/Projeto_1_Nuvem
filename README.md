@@ -17,6 +17,11 @@ Instale as dependencias:
 pip install -r requirements.txt
 ```
 
+Crie um superuser:
+```sh
+python manage.py createsuperuser
+```
+
 Suba as migrations:
 ```sh
 python manage.py migrate
