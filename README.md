@@ -34,6 +34,6 @@ python manage.py runserver
 
 Acesse o site:
 ```sh
-localhost:8000/home
+localhost:8000
 ```
 
