@@ -32,6 +32,11 @@ Para iniciar o server:
 python manage.py runserver
 ```
 
+No linux, nas vms, use:
+```sh
+python3 manage.py runserver 0.0.0.0:8000
+```
+
 Acesse o site:
 ```sh
 localhost:8000
