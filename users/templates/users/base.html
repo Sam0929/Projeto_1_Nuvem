@@ -129,6 +129,41 @@
             themeToggler.querySelector('span:nth-child(2)').classList.toggle('active');
         });
     </script>
+
+   <script>
+        // Seleciona todos os links da sua sidebar
+        const links = document.querySelectorAll(".sidebar a");
+        
+        // Pega o caminho da URL atual (ex: "/users/home/")
+        const currentPath = window.location.pathname;
+
+        // --- PARTE 1: MARCAR O LINK ATIVO AO CARREGAR A PÁGINA ---
+        // Esta lógica garante que a página correta já comece com o link ativo.
+        links.forEach(link => {
+            // Compara o href do link com a URL atual
+            if (link.getAttribute("href") === currentPath) {
+                link.classList.add("active");
+            } else {
+                // Garante que outros links não tenham a classe 'active' por engano
+                link.classList.remove("active");
+            }
+        });
+
+    // --- PARTE 2: ADICIONAR A LÓGICA DE CLIQUE (O que você pediu) ---
+    // Itera sobre cada link para adicionar um "ouvinte de clique"
+        links.forEach(link => {
+            link.addEventListener('click', function(event) {
+                
+                // 1. Primeiro, remove a classe 'active' de TODOS os links da sidebar.
+                //    Isso garante que o link "anterior" seja desativado.
+                links.forEach(item => item.classList.remove('active'));
+
+                // 2. Depois, adiciona a classe 'active' APENAS ao link que foi clicado.
+                //    'event.currentTarget' se refere exatamente ao elemento que recebeu o clique.
+                event.currentTarget.classList.add('active');
+            });
+        });
+    </script>
      
     {% block scripts %}
     {% endblock %}

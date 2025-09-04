@@ -17,6 +17,21 @@ Instale as dependencias:
 pip install -r requirements.txt
 ```
 
+Copie o arquivo .env.example:
+```sh
+cp .env.example .env
+```
+
+Crie uma pasta media:
+```sh
+mkdir -p media/profile_images
+```
+
+Copie a imagem default para media:
+```sh
+cp default.jpg media/
+```
+
 Crie um superuser:
 ```sh
 python manage.py createsuperuser
