@@ -10,28 +10,10 @@
 
 
 {% block content %}
-    <h1>Configurações do Perfil</h1>
 
-    {# Exibição de Erros de Formulário (usando o mesmo estilo das mensagens de login) #}
-    {% if user_form.errors or profile_form.errors %}
-        <div class="messages-container" style="margin-top: 1rem;">
-            <div class="message error">
-                <p style="margin-bottom: 0.5rem;"><strong>Por favor, corrija os erros abaixo:</strong></p>
-                <ul>
-                    {% for field, error_list in user_form.errors.items %}
-                        {% for error in error_list %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for field, error_list in profile_form.errors.items %}
-                        {% for error in error_list %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    {% endif %}
+    
+
+    <h1>Configurações do Perfil</h1>
 
     <div class="profile-form-container">
         <form method="post" enctype="multipart/form-data">
@@ -55,6 +37,34 @@
                         <span id="file-name-display" class="file-name">Nenhum arquivo selecionado</span>
 
                     </div>
+                    {% if messages %}
+                    <div class="messages-container">
+                        {% for message in messages %}
+                            <div class="message {{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                        {% endif %}
+                    {% if user_form.errors or profile_form.errors %}
+                        <div class="messages-container" style="margin-top: 1rem;">
+                            <div class="message error">
+                                <p style="margin-bottom: 0.5rem;"><strong>Por favor, corrija os erros abaixo:</strong></p>
+                                <ul>
+                                    {% for field, error_list in user_form.errors.items %}
+                                        {% for error in error_list %}
+                                            <small class="danger">{{ error }}</small>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for field, error_list in profile_form.errors.items %}
+                                        {% for error in error_list %}
+                                            <small class="danger">{{ error }}</small>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="details-section">

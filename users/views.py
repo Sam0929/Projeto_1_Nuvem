@@ -126,7 +126,7 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'users/change_password.html'
     form_class = CustomPasswordChangeForm 
-    success_message = "Successfully Changed Your Password"
+    success_message = "Você trocou sua senha com sucesso!"
     success_url = reverse_lazy('users:home')
 
 def logout_view(request):
@@ -145,7 +145,7 @@ def profile(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, 'Your profile is updated successfully')
+            messages.success(request, 'Seu perfil foi atualizado com sucesso!')
             return redirect(to='users:profile')
     else:
         user_form = UpdateUserForm(instance=request.user)

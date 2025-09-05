@@ -32,6 +32,11 @@ Copie a imagem default para media:
 cp default.jpg media/
 ```
 
+Execute, se for usar nas vms:
+```sh
+python manage.py collectstatic
+```
+
 Crie um superuser:
 ```sh
 python manage.py createsuperuser
