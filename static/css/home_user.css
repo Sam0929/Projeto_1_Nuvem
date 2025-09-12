@@ -317,25 +317,27 @@ main .insights svg circle {
     stroke-width: 14;
     stroke-linecap: round;
     transform: translate(5px, 5px);
-    stroke-dasharray: 110;
-    stroke-dashoffset: 92;
 }
 
-main .insights .balance svg circle {
-    stroke-dasharray: 200;
-    stroke-dashoffset: -30;
+/* track (fundo) */
+main .insights svg .track {
+    stroke: var(--color-light);
+    opacity: 0.6;
 }
 
-main .insights .incomes svg circle {
+main .insights .incomes svg .progress-circle-incomes {
     stroke: var(--color-success);
-    stroke-dasharray: 110;
-    stroke-dashoffset: 35;
 }
 
-main .insights .expenses svg circle {
+main .insights .expenses svg .progress-circle-expenses {
     stroke: var(--color-danger);
-    stroke-dasharray: 80;
-    stroke-dashoffset: 20;
+}
+
+/* animação e início no topo */
+.progress circle {
+    transition: stroke-dashoffset 0.5s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
 }
 
 main .insights .progress .number {
@@ -544,4 +546,10 @@ main a {
     color: var(--color-danger);
     background-color: rgba(255, 119, 130, 0.1);
     border-color: var(--color-danger);
+}
+
+.progress circle {
+    transition: stroke-dashoffset 0.5s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
 }

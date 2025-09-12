@@ -80,6 +80,7 @@
                 </div>
             </div>
 
+            {% if request.resolver_match.url_name == "home" %}
             <div class="investor">
                 <h2>Mercado de Ações</h2>
                 {% for stock in stocks %}
@@ -113,6 +114,7 @@
                     <a href="#">Adicionar Ação</a>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
     {{ stocks|json_script:"stocks-data" }}
