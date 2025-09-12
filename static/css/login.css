@@ -270,11 +270,9 @@ main.sign-up-mode .image {
 .messages-container {
     width: 100%;
     margin-bottom: 1rem;
-    
     position: relative;
     z-index: 10;
 }
-
 
 .message {
     padding: 1rem;
@@ -284,7 +282,6 @@ main.sign-up-mode .image {
     text-align: center;
     font-weight: 500;
 }
-
 
 .message.info {
     color: var(--color-primary);

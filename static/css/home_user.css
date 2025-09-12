@@ -13,7 +13,9 @@
     --color-primary-variant: #111e88;
     --color-dark-variant: #677483;
     --color-background: #f6f6f9;
-
+    --color-warning-light: rgba(255, 187, 85, 0.2);
+    --color-danger-light: rgba(255, 119, 130, 0.15);
+    --color-dark-danger: #d9534f;
     --card-border-radius: 2rem;
     --border-radius-1: 0.4rem;
     --border-radius-2: 0.8rem;
@@ -497,4 +499,49 @@ main a {
 
 .right .investor .add-stock div h3 {
     font-weight: 600;
+}
+
+/* ---------- MENSAGENS ------------------- */
+
+.messages-container {
+    width: 100%;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+.message {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-1);
+    text-align: center;
+    font-weight: 500;
+}
+
+.message.info {
+    color: var(--color-primary);
+    background-color: var(--color-light);
+    border-color: var(--color-primary);
+}
+
+
+.message.success {
+    color: var(--color-success);
+    background-color: rgba(0, 192, 157, 0.1);
+    border-color: var(--color-success);
+}
+
+
+.message.warning {
+    color: #856404; 
+    background-color: rgba(255, 187, 85, 0.2); 
+    border-color: var(--color-warning);
+}
+
+.message.error {
+    color: var(--color-danger);
+    background-color: rgba(255, 119, 130, 0.1);
+    border-color: var(--color-danger);
 }

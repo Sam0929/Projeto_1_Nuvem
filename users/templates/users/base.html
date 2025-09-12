@@ -30,21 +30,17 @@
                     <span class="material-symbols-outlined">dashboard</span>
                     <h3>Dashboard</h3>
                 </a>
-                <a href="#">
-                    <span class="material-symbols-outlined">add_circle</span>
-                    <h3>Entradas</h3>
+                <a href="{% url 'transactions:list' %}">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    <h3>Lançamentos</h3>
                 </a>
-                <a href="#">
-                    <span class="material-symbols-outlined">do_not_disturb_on</span>
-                    <h3>Saídas</h3>
+                <a href="{% url 'transactions:create' %}">
+                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                    <h3>Adicionar Lançamento</h3>
                 </a>
                 <a href="{% url 'users:profile' %}">
                     <span class="material-symbols-outlined">manage_accounts</span>
                     <h3>Configurações</h3>
-                </a>
-                <a href="#">
-                    <span class="material-symbols-outlined">add_shopping_cart</span>
-                    <h3>Adicionar Lançamento</h3>
                 </a>
                 <a href="{% url 'users:logout' %}">
                     <span class="material-symbols-outlined">logout</span>
@@ -76,9 +72,11 @@
                             <small class="text-muted">Cliente</small>
                         {% endif %}
                     </div>
-                    <div class="profile-photo">
-                        <img src="{{ user.profile.avatar.url }}" alt="Foto do perfil">
-                    </div>
+                    <a href="{% url 'users:profile' %}" class="photo-link">
+                        <div class="profile-photo">
+                            <img src="{{ user.profile.avatar.url }}" alt="Foto do perfil">
+                        </div>
+                    </a>
                 </div>
             </div>
 

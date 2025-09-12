@@ -7,8 +7,9 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm, CustomPasswordChangeForm
-from .models import Transaction  
+from transactions.models import Transaction 
 from django.db.models import Sum
+from decimal import Decimal
 
 @login_required
 def home(request):
@@ -16,11 +17,10 @@ def home(request):
     transactions = Transaction.objects.filter(user=request.user)
    
     positive_total_dict = transactions.filter(value__gt=0).aggregate(total=Sum('value'))
-    positiveTotal = positive_total_dict['total'] or 0.00
+    positiveTotal = positive_total_dict['total'] or Decimal('0.00')
 
-    
     negative_total_dict = transactions.filter(value__lt=0).aggregate(total=Sum('value'))
-    negativeTotal = negative_total_dict['total'] or 0.00
+    negativeTotal = negative_total_dict['total'] or Decimal('0.00')
 
     balance = positiveTotal + negativeTotal
 
