@@ -1,0 +1,11 @@
+- Criar testes unitários no Python, mais de 7 testes, testando as principais funcionalidades da aplicação
+  - Backend
+  - Frontend
+  - Banco de Dados
+
+- Criar docker compose para subir a aplicação e o Banco de Dados e alterar o código da aplicação para
+suportar isso
+
+- Criar pelo menos 3 testes de integração da aplicação
+
+- Criar o pipeline para o GitHub Actionas executar os testes
